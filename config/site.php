@@ -4,7 +4,7 @@ return [
     'name' => 'DETRA SARL',
     'city' => 'Kinshasa',
     'email' => env('DETRA_EMAIL', 'sales@detradrc.com'),
-    'phone' => env('DETRA_PHONE', '(+243) 999 964 546'),
+    'phone' => env('DETRA_PHONE', '+243 818 822 223'),
     'address' => env('DETRA_ADDRESS', '25c, Dr MANKOYI, Kinshasa – Ngaliema / R.D. Congo'),
     'website' => env('DETRA_WEBSITE', 'https://www.detradrc.com'),
     'pages' => [

@@ -20,6 +20,8 @@ L'accès FTP fourni est limité à la racine Web `/htdocs`. Son répertoire pare
 
 Le `.env` partagé a également été copié dans la version active. Le point d'entrée de production fixe le chemin public à `/htdocs`. Le projet local conserve son point d'entrée Laravel standard.
 
+Le numéro public a été remplacé par `+243 818 822 223` le 11 septembre 2026, dans la configuration, les fichiers d'environnement et le cache de la version active. Les liens `tel:+243818822223` ont été vérifiés sur les accueils et les pages Contact français et anglais. La configuration précédente est sauvegardée dans `.detra/backups/phone-20260911-7087228e72a5591e`.
+
 ## Configuration et compilation
 
 - PHP serveur : 8.5.10, avec `pdo_sqlite`, `mbstring`, `openssl`, `zip` et les autres extensions nécessaires.

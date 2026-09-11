@@ -51,7 +51,7 @@ Les demandes ne sont pas exposées sur une route publique. Le formulaire transme
 - Pages : `resources/views/pages/`.
 - Styles et interactions : `resources/css/app.css`, `resources/js/app.js`.
 
-Le logo et les coordonnées proviennent des indications du client : 25c, Dr MANKOYI, Kinshasa – Ngaliema / R.D. Congo ; (+243) 999 964 546 ; sales@detradrc.com ; www.detradrc.com. Le domaine est affiché comme coordonnée publique ; l’adresse du serveur de développement reste locale. Le catalogue (gasoil, essence, fioul, lubrifiants) est indicatif et reste à confirmer, ainsi que les textes commerciaux et les conditions de traitement et de conservation des demandes avant publication.
+Le logo et les coordonnées proviennent des indications du client : 25c, Dr MANKOYI, Kinshasa – Ngaliema / R.D. Congo ; +243 818 822 223 ; sales@detradrc.com ; www.detradrc.com. Le domaine est affiché comme coordonnée publique ; l’adresse du serveur de développement reste locale. Le catalogue (gasoil, essence, fioul, lubrifiants) est indicatif et reste à confirmer, ainsi que les textes commerciaux et les conditions de traitement et de conservation des demandes avant publication.
 
 ## Visuels
 
