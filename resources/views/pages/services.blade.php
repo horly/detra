@@ -1,0 +1,7 @@
+@extends('layouts.site')
+@section('content')
+<x-page-heading page="services" />
+<section class="section-space"><div class="site-container service-details">@foreach(__('site.services.items') as $service)<article id="{{ $service['id'] }}" class="service-detail grid items-center gap-10 lg:grid-cols-2 lg:gap-20"><div class="detail-image"><img src="{{ asset('images/'.$service['image']) }}" alt="{{ $service['alt'] }}" width="768" height="512" @if(!$loop->first) loading="lazy" @endif><span class="photo-credit">{{ __('site.common.illustration') }}</span></div><div><span class="detail-number">0{{ $loop->iteration }} <x-icon :name="$service['icon']" /></span><h2>{{ $service['title'] }}</h2><p class="body-copy mt-5">{{ $service['description'] }}</p><ul class="value-list">@foreach($service['points'] as $point)<li><x-icon name="check" />{{ $point }}</li>@endforeach</ul><a class="text-link" href="{{ route($locale.'.contact', ['service' => $service['id']]) }}">{{ __('site.services.request') }}<x-icon /></a></div></article>@endforeach</div></section>
+<section class="section-space bg-sand"><div class="site-container"><div class="section-heading max-w-2xl"><p class="eyebrow">{{ __('site.services.process_label') }}</p><h2>{{ __('site.services.process_title') }}</h2></div><div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">@foreach(__('site.services.steps') as $step)<article class="process-step"><span>0{{ $loop->iteration }}</span><h3>{{ $step['title'] }}</h3><p>{{ $step['text'] }}</p></article>@endforeach</div></div></section>
+<x-cta />
+@endsection

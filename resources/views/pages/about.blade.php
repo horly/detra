@@ -1,0 +1,8 @@
+@extends('layouts.site')
+@section('content')
+<x-page-heading page="about" />
+<section class="section-space"><div class="site-container grid items-center gap-12 lg:grid-cols-2 lg:gap-20"><div class="about-visual team-visual"><img src="{{ asset('images/energy-team.webp') }}" alt="{{ __('experience.team_alt') }}" width="1536" height="1024"><div class="location-card"><x-icon name="pin" class="size-10" /><div><strong>Kinshasa</strong><span>{{ __('site.common.location') }}</span></div></div><span class="photo-credit">{{ __('site.common.illustration') }}</span></div><div><p class="eyebrow">{{ __('site.about.label') }}</p><h2>{{ __('site.about.heading') }}</h2><p class="body-copy mt-6">{{ __('site.about.text') }}</p><p class="body-copy mt-5">{{ __('site.about.text_second') }}</p></div></div></section>
+<section class="bg-sand py-16"><div class="site-container grid gap-10 md:grid-cols-2"><div class="mission-block"><span>01</span><h2>{{ __('site.about.mission_title') }}</h2><p>{{ __('site.about.mission') }}</p></div><div class="mission-block"><span>02</span><h2>{{ __('site.about.vision_title') }}</h2><p>{{ __('site.about.vision') }}</p></div></div></section>
+<section class="section-space"><div class="site-container"><div class="section-heading max-w-2xl"><p class="eyebrow">{{ __('site.about.values_label') }}</p><h2>{{ __('site.about.values_title') }}</h2></div><div class="grid gap-8 md:grid-cols-3">@foreach(__('site.about.values') as $value)<article class="value-card"><x-icon :name="$value['icon']" class="size-10 text-copper" /><h3>{{ $value['title'] }}</h3><p>{{ $value['text'] }}</p></article>@endforeach</div></div></section>
+<x-cta />
+@endsection
