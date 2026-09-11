@@ -12,6 +12,6 @@ class Inquiry extends Model
 
     protected function casts(): array
     {
-        return ['consented_at' => 'datetime'];
+        return ['consented_at' => 'datetime', 'notification_sent_at' => 'datetime'];
     }
 }

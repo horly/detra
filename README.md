@@ -39,7 +39,7 @@ php artisan detra:inquiries --limit=50
 php artisan detra:inquiries --id=1
 ```
 
-Les demandes ne sont pas exposées sur une route publique. Aucune notification par e-mail n’est envoyée dans cette version. Le formulaire enregistre les demandes en base ; la configuration d’un destinataire, d’un transport SMTP et des notifications constitue une évolution distincte.
+Les demandes ne sont pas exposées sur une route publique. Le formulaire transmet une notification HTML et texte à `sales@detradrc.com` lorsque le SMTP est configuré. L’adresse du visiteur devient l’adresse de réponse. En cas d’indisponibilité du SMTP, la demande reste enregistrée et peut être renvoyée avec `php artisan detra:inquiries:notify`. Les paramètres LWS et les étapes d’activation sont décrits dans [docs/mail.md](docs/mail.md). Avec le transport local `log`, aucun e-mail réel n’est envoyé.
 
 ## Personnaliser le contenu
 
@@ -73,8 +73,8 @@ php vendor/bin/pint --test
 npm run build
 ```
 
-La suite comporte 56 tests (259 assertions), dont les pages bilingues, les formulaires valides et invalides, les retours vers le formulaire d’accueil, l’échappement des champs, les paramètres de confiance, la confirmation et la limitation partagée des envois. Des vérifications locales de navigateur ont également couvert les affichages 390 px / 1440 px, le menu mobile, les filtres du catalogue, les animations au défilement, la réduction des mouvements et l’accès au contenu sans JavaScript. Les captures se trouvent dans `storage/app/previews/` (ignoré par Git).
+La suite comporte 70 tests (362 assertions), dont les pages bilingues, les formulaires valides et invalides, les retours vers le formulaire d’accueil, l’échappement des champs et des e-mails, les paramètres de confiance, la confirmation, la limitation partagée des envois, les notifications et la reprise après échec SMTP. Des vérifications locales de navigateur ont également couvert les affichages 390 px / 1440 px, le menu mobile, les filtres du catalogue, les animations au défilement, la réduction des mouvements et l’accès au contenu sans JavaScript. Les captures se trouvent dans `storage/app/previews/` (ignoré par Git).
 
 ## Hébergement
 
-Configurer le serveur web pour servir exclusivement `public/`, renseigner l’URL et les variables de production, désactiver `APP_DEBUG`, exécuter les migrations puis générer le build. Prévoir les sauvegardes de la base contenant les demandes. Le site est actuellement préparé et lancé localement ; aucun déploiement public n’a été effectué.
+Le site a été déployé sur `https://www.detradrc.com` le 10 septembre 2026. Les notifications SMTP ont été activées le 11 septembre : authentification et expéditeur `tonymukash@detradrc.com`, destinataire `sales@detradrc.com`. L’organisation du serveur LWS et les sauvegardes sont décrites dans [docs/deployment.md](docs/deployment.md).

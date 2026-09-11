@@ -1,7 +1,12 @@
 <?php
 
+use App\Mail\InquiryReceived;
 use App\Models\Inquiry;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Symfony\Component\Mailer\Exception\TransportException;
+use Tests\Support\FailingMailTransport;
 
 uses(LazilyRefreshDatabase::class);
 
@@ -19,8 +24,9 @@ function validInquiryPayload(array $overrides = []): array
 }
 
 test('saves an enquiry with the route language and server consent time', function (string $locale) {
+    Mail::fake();
     $this->travelTo('2026-09-10 10:00:00');
-    $payload = validInquiryPayload(['locale' => 'de', 'consented_at' => '2000-01-01', 'id' => 9999]);
+    $payload = validInquiryPayload(['locale' => 'de', 'consented_at' => '2000-01-01', 'id' => 9999, 'to' => 'attacker@example.test', 'notification_sent_at' => '2000-01-01']);
 
     $response = $this->post('/'.$locale.'/contact', $payload);
 
@@ -32,7 +38,10 @@ test('saves an enquiry with the route language and server consent time', functio
         'email' => 'marie@example.test', 'phone' => '+243 000 000 000',
         'service' => 'import', 'message' => $payload['message'],
         'locale' => $locale, 'consented_at' => '2026-09-10 10:00:00',
+        'notification_sent_at' => '2026-09-10 10:00:00',
     ]);
+    Mail::assertSent(InquiryReceived::class, fn (InquiryReceived $mail) => $mail->hasTo('sales@detradrc.com')
+        && count($mail->to) === 1 && $mail->inquiry->email === 'marie@example.test' && $mail->inquiry->locale === $locale);
 })->with(['fr', 'en']);
 
 test('accepts the supported service choices without optional contact fields', function (string $service) {
@@ -58,12 +67,14 @@ test('rejects missing required fields with French feedback and saves nothing', f
 });
 
 test('rejects invalid enquiry fields with precise feedback and saves nothing', function (string $field, mixed $value, string $error) {
+    Mail::fake();
     $payload = validInquiryPayload([$field => $value]);
 
     $response = $this->from('/fr/contact')->post('/fr/contact', $payload);
 
     $response->assertRedirect('/fr/contact')->assertSessionHasErrors([$field => $error]);
     $this->assertDatabaseEmpty(Inquiry::class);
+    Mail::assertNothingSent();
 })->with([
     'malformed email' => ['email', 'not-an-email', 'Le champ adresse e-mail doit être une adresse e-mail valide.'],
     'unknown service' => ['service', 'invalid', 'Le champ service sélectionné est invalide.'],
@@ -108,6 +119,7 @@ test('does not expose saved enquiries on a public route', function () {
 });
 
 test('saves a home page enquiry and returns to its contact section', function (string $locale) {
+    Mail::fake();
     $payload = validInquiryPayload(['page' => 'contact', 'return_to' => 'https://example.test']);
 
     $response = $this->post('/'.$locale, $payload);
@@ -118,7 +130,22 @@ test('saves a home page enquiry and returns to its contact section', function (s
     $this->assertDatabaseHas(Inquiry::class, [
         'email' => 'marie@example.test', 'message' => $payload['message'], 'locale' => $locale,
     ]);
+    Mail::assertSent(InquiryReceived::class, fn (InquiryReceived $mail) => $mail->hasTo('sales@detradrc.com') && $mail->inquiry->locale === $locale);
 })->with(['fr', 'en']);
+
+test('keeps the request and its confirmation when smtp is unavailable', function (string $path) {
+    Mail::mailer()->setSymfonyTransport(new FailingMailTransport);
+    Log::spy();
+
+    $response = $this->post($path, validInquiryPayload());
+
+    $response->assertRedirect(url($path).($path === '/fr' ? '#contact' : ''))
+        ->assertSessionHasNoErrors()->assertSessionHas('inquiry_reference', 'DTR-000001');
+    $this->assertDatabaseHas(Inquiry::class, ['id' => 1, 'email' => 'marie@example.test', 'notification_sent_at' => null]);
+    Log::shouldHaveReceived('warning')->once()->with('Contact notification could not be sent.', [
+        'inquiry_id' => 1, 'exception' => TransportException::class,
+    ]);
+})->with(['/fr', '/en/contact']);
 
 test('returns home page validation errors to the form with the input preserved', function (string $locale) {
     $payload = validInquiryPayload(['email' => 'invalid']);

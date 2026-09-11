@@ -1,6 +1,6 @@
 # Déploiement de production
 
-Mise en ligne le 10 septembre 2026 sur **https://www.detradrc.com**, hébergement LWS. Les variantes HTTP et le domaine sans `www` redirigent vers cette adresse en HTTPS.
+Mise en ligne le 10 septembre 2026 sur **https://www.detradrc.com**, hébergement LWS. Les variantes HTTP et le domaine sans `www` redirigent vers cette adresse en HTTPS. Version active depuis le 11 septembre : `20260911-01`, avec les notifications SMTP des formulaires.
 
 ## Organisation sur le serveur
 
@@ -8,13 +8,15 @@ L'accès FTP fourni est limité à la racine Web `/htdocs`. Son répertoire pare
 
 | Emplacement | Contenu |
 | --- | --- |
-| `/htdocs/index.php` | Point d'entrée vers la version `20260910-01` |
+| `/htdocs/index.php` | Point d'entrée vers la version `20260911-01` |
 | `/htdocs/.htaccess` | Redirections HTTPS, interdiction des chemins cachés, routage Laravel |
 | `/htdocs/build`, `/htdocs/images` | Assets Vite et images WebP |
-| `/htdocs/.detra/releases/20260910-01` | Application Laravel et dépendances Composer de production |
+| `/htdocs/.detra/releases/20260911-01` | Application Laravel et dépendances Composer de production |
+| `/htdocs/.detra/releases/20260910-01` | Version précédente conservée pour retour arrière |
 | `/htdocs/.detra/shared/.env` | Configuration de production et clé de chiffrement |
 | `/htdocs/.detra/shared/database.sqlite` | Base persistante : demandes, sessions et cache |
 | `/htdocs/.detra/backups/20260910-01` | Page d'attente précédente et sauvegarde initiale cohérente de la base |
+| `/htdocs/.detra/backups/20260911-01` | Base avant migration SMTP, configuration et point d'entrée précédents |
 
 Le `.env` partagé a également été copié dans la version active. Le point d'entrée de production fixe le chemin public à `/htdocs`. Le projet local conserve son point d'entrée Laravel standard.
 
@@ -42,8 +44,8 @@ Les rapports et captures locaux se trouvent dans `storage/app/previews/deploymen
 
 ## Exploitation
 
-Les demandes de contact sont enregistrées en base. **Aucune notification e-mail automatique n'est encore implémentée** ; `MAIL_MAILER=log`. Le lien `sales@detradrc.com` reste un lien vers la messagerie du visiteur.
+Les demandes sont enregistrées en base puis notifiées par SMTP vers `sales@detradrc.com`. L'authentification et l'expéditeur utilisent `tonymukash@detradrc.com`, sur `mail.detradrc.com:465` avec `MAIL_SCHEME=smtps`. L'adresse du visiteur est utilisée comme adresse de réponse. Les mots de passe restent dans les fichiers d'environnement privés. Voir [mail.md](mail.md) pour la configuration et la reprise des demandes en attente.
 
 La commande `php artisan detra:inquiries` permet de consulter les demandes depuis un terminal de l'hébergement, si disponible, en se plaçant dans la version active. Aucun accès SSH n'a été fourni ni configuré pendant ce déploiement.
 
-Pour une prochaine version, préserver la clé de production et `.detra/shared/database.sqlite`, effectuer une sauvegarde cohérente de la base, préparer un nouveau dossier de version, exécuter ses migrations et caches sur le serveur, puis basculer le point d'entrée. Les caches de configuration générés localement ne doivent pas être transférés. La sauvegarde décrite ici est une sauvegarde initiale ; aucune sauvegarde périodique n'a été configurée.
+Pour une prochaine version, préserver la clé de production et `.detra/shared/database.sqlite`, effectuer une sauvegarde cohérente de la base, préparer un nouveau dossier de version, exécuter ses migrations et caches sur le serveur, puis basculer le point d'entrée. Les caches de configuration générés localement ne doivent pas être transférés. Les sauvegardes décrites ici ont été réalisées lors des déploiements ; aucune sauvegarde périodique n'a été configurée.
